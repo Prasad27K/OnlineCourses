@@ -1,0 +1,113 @@
+<!-- Syllubas Items -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Add Syllabus</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="OnlineCourse.css"></link>
+</head>
+<body>
+	<button id="addCourse" onclick="addCource()">Add Course</button>
+	<div id="card" class="include"></div>
+</body>
+<script type="text/javascript">
+	var syllabusItems = [];
+	var flag = 0;
+	var addCourseForm = (`<div class="controls">
+		<fieldset>\
+		<legend>Syllabus Title</legend>
+		<input id="syllabusTitle" class="input-field" type="text" name="text" placeholder="Syllabus-title">
+		</fieldset>
+		<fieldset>
+		<legend>Syllabus description</legend>
+		<input id="syllabusDescription" class="input-field" type="text" name="text" placeholder="Syllabus description ">
+		</fieldset>
+		<fieldset>
+		<legend>Learning objective</legend>
+		<input id="learningObjective" class="input-field" type="text" name="text" placeholder="Syllabus objective">
+		</fieldset>
+		<button id="saveCourse">Save</button>
+		<button class="remove">Cancel</button>
+		</div>`);
+	function addCource()
+		{
+			$(".include").append(addCourseForm);
+		}
+
+		$(document).on('click', '.remove', function() {
+			$(this).parent().remove();
+		});
+	
+	$(document).on('click', '#saveCourse', function()
+	{
+		let courseItem = {};
+		if (flag == 0)
+		{
+
+			$('.controls input').each(function()
+			{
+				var id = $(this).attr("id");
+				var value = $(this).val();
+			    if (value != '')
+			    {
+			        courseItem[id] = value;
+			    }
+			})
+   		syllabusItems.push(courseItem);
+			console.log(syllabusItems);
+			saveToCard();
+			$(this).parent().remove();
+		}
+	});
+
+	function saveToCard()
+		{
+			$(".contents").remove();
+			let counter = 0;
+			while(counter < syllabusItems.length)
+			{
+				let obj = syllabusItems[counter];
+				$("#card").append(`<div class="contents">
+				<label id="index">${(counter + 1)}</label><label class="cardContent">${obj.syllabusTitle}</label> <br> <label class="cardContent">${obj.syllabusDescription}</label><a href="#" id="delete" onclick="deleteCourse(${counter})">delete</a><a href="#" id="edit${ounter}"  onclick="edit(${counter})">Edit</a>
+				<div>`);
+				counter++;	
+			}
+		}
+
+		function deleteCourse(index)
+		{
+			var ok = confirm("Are you sure to Delete?");
+			if(ok)
+			{
+				syllabusItems.splice(index, 1);
+				saveToCard();
+			}
+		}
+		
+		function edit(index)
+		{
+			flag = 1;
+			let obj = syllabusItems[index];
+			console.log(obj)
+			console.log(obj.syllabusDescription);
+			console.log(syllabusItems[index]["syllabusTitle"]);
+			$("#edit" + index).parent().replaceWith(addCourseForm);
+			$("#syllabusTitle").val(obj.syllabusTitle);
+			$("#syllabusDescription").val(obj.syllabusDescription);
+			$("#learningObjective").val(obj.learningObjective);
+			$(document).on('click', '#saveCourse', function()
+			{
+				if (flag == 1)
+				{
+					syllabusItems[index] = {"syllabusTitle": $("#syllabusTitle").val(), "syllabusDescription": $("#syllabusDescription").val(), "learningObjective":$("#learningObjective").val()};
+					saveToCard();
+					$(this).parent().remove();
+				}
+			});
+		}
+	
+</script>
+</html>
