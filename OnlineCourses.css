@@ -1,8 +1,22 @@
-#AddItem
+#mainCard
+{
+	height: 500px;
+	width: 800px;
+}
+#addCourse
 {
 	float: right;
+	margin-left: 400px;
 	height: 50px;
 	width: 100px;
+}
+#header
+{
+	float: left;
+}
+#card
+{
+	float: left;
 }
 .input-field
 {
@@ -21,17 +35,22 @@ a
 	border: 5px solid;
 	margin-top: 10px;
 	height: 50px;
-	width: 100%;
+	width: 500px;
 }
 .cardContent
 {
 	padding-left: 20px;
 }
+.addCourseForm
+{
+	margin-top: 10px;
+	float: left;
+}
 fieldset 
 {
 	min-width: 0;
 	padding: 0;
-	margin: 0;
+	margin: 10px;
 	border: 10px;
 }
 
@@ -40,10 +59,6 @@ legend
 	width: 100%;
 	padding: 2px;
 	border: 10px;
-	border-bottom:31px;
+	border-bottom:0px;
 	margin-bottom: 2px;
-}
-body
-{
-	background-color: skyblue;
 }
