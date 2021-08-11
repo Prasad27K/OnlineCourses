@@ -99,13 +99,13 @@
 		const obj = syllabusItems[index];
 
 		$("#edit" + index).parent().replaceWith(addCourseForm);
-		$('#Title').attr('id', `Title${index}`);
-		$('#Description').attr('id', `Description${index}`);
-		$('#Objective').attr('id', `Objective${index}`);
+		// $('#Title').attr('id', `Title${index}`);
+		// $('#Description').attr('id', `Description${index}`);
+		// $('#Objective').attr('id', `Objective${index}`);
 
-		$(`#Title${index}`).val(obj.Title);
-		$(`#Description${index}`).val(obj.Description);
-		$(`#Objective${index}`).val(obj.Objective);
+		$('#Title').val(obj.Title);
+		$('#Description').val(obj.Description);
+		$('#Objective').val(obj.Objective);
 		
 		$('#saveCourse').attr('id', `editCourse${index}`);
 		$(`#editCourse${index}`).attr('onclick', `editCourse(${index})`);
@@ -114,13 +114,12 @@
 
 	function editCourse(index)
 	{
-		syllabusItems[index] = {Title: $(`#Title${index}`).val(), Description: $(`#Description${index}`).val(), Objective: $(`#Objective${index}`).val()};
+		syllabusItems[index] = {Title: $('#Title').val(), Description: $('#Description').val(), Objective: $('#Objective').val()};
 		console.log(syllabusItems);
 		console.log(courseItem);
 		reRenderCads(syllabusItems);
-		$(`#editCourse${index}`).parent().remove();
+		$(`#editCourse${index}`).parent().remove();	
 	}
-	
-	
+
 </script>
 </html>
