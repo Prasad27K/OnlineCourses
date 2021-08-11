@@ -11,110 +11,116 @@
 </head>
 <body>
 	<div id="mainCard">
-		<div id="header"><button id="addCourse" onclick="addCource()">Add Course</button></div>
-		<div id="card" class="include"></div>
+		
+		<div id="card" class="include">
+			<div id="header"><button id="addCourse" class="btn btn-info" onclick="addCource(addCourseForm)">Add Course</button></div>
+		</div>
 	</div>
 </body>
 <script type="text/javascript">
 	var syllabusItems = [];
 	var courseItem = {};
 	var flag = 0;
-	var addCourseForm = (`<div class="addCourseForm">
-		<br>
-		<fieldset>
-		<legend>Syllabus Title</legend>
-		<input id="syllabusTitle" class="input-field" type="text" name="text" placeholder="Syllabus-title">
+	var addCourseForm = (`<div id="addCourseForm" class="addCourseForm">
+		<fieldset class="scheduler-border">
+		<legend class="scheduler-border">Syllabus Title</legend>
+		<input id="Title" class="input-field" type="text" name="text" placeholder="Syllabus-title">
 		</fieldset>
 		<fieldset>
 		<legend>Syllabus description</legend>
-		<input id="syllabusDescription" class="input-field" type="text" name="text" placeholder="Syllabus description ">
+		<input id="Description" class="input-field" type="text" name="text" placeholder="Syllabus description ">
 		</fieldset>
 		<fieldset>
 		<legend>Learning objective</legend>
-		<input id="learningObjective" class="input-field" type="text" name="text" placeholder="Syllabus objective">
+		<input id="Objective" class="input-field" type="text" name="text" placeholder="Syllabus objective">
 		</fieldset>
-		<button id="saveCourse">Save</button>
-		<button class="remove">Cancel</button>
+		<button id="saveCourse" class="btn btn-info">Save</button>
+		<button id="cancel" class="btn btn-info">Cancel</button>
 		</div>`);
-	function addCource()
+	function addCource(addCourseForm)
 	{
 		$(".include").append(addCourseForm);
 	}
 
-	$(document).on('click', '.remove', function() {
+	$(document).on('click', '#cancel', function() {
 		$(this).parent().remove();
 	});
 	
 	$(document).on('click', '#saveCourse', function()
 	{
-		if (flag == 0)
-		{
-			courseItem = {};
-			readInputValues();
-	   		syllabusItems.push(courseItem);
-			console.log(syllabusItems);
-			saveToCard();
-			$(this).parent().remove();
-		}
+		courseItem = {};
+		readInputValues();
+   		syllabusItems.push(courseItem);
+		console.log(syllabusItems);
+		reRenderCads(syllabusItems);
+		$(this).parent().remove();
 	});
 
 	function readInputValues()
 	{
-		$('.addCourseForm input').each(function()
+		$('#addCourseForm input').each(function()
 		{
-			var id = $(this).attr("id");
-			var value = $(this).val();
+			let id = $(this).attr("id");
+			let value = $(this).val();
 		    if (value != '')
 		    {
 		        courseItem[id] = value;
 		    }
 		})
 	}
-	function saveToCard()
+	function reRenderCads(syllabusItems)
 	{
 		$(".contents").remove();
-		for(let counter = 0; counter < syllabusItems.length; counter++)
+		let counter = 0;
+		for( const obj of syllabusItems)
 		{
-			console.l
-			let obj = syllabusItems[counter];
 			$("#card").append(`<div class="contents">
-			<label id="index">${(counter + 1)}</label><label class="cardContent">${obj.syllabusTitle}</label> <br> <label class="cardContent">${obj.syllabusDescription}</label><a href="#" id="delete" onclick="deleteCourse(${counter})">delete</a><a href="#" id="edit${counter}"  onclick="edit(${counter})">Edit</a>
-			<div>`);
+								<label id="index">${(counter + 1)}</label>
+								<label class="cardContent">${obj.Title}<br>${obj.Description}</label> 
+								<a href="#" id="delete" onclick="deleteCourse(${counter})">delete</a>
+								<a href="#" id="edit${counter}"  onclick="editCourseForm(${counter})">Edit</a>
+								</div>`);
+			counter++;
 		}
 	}
 
 	function deleteCourse(index)
 	{
-		let ok = confirm("Are you sure to Delete?");
+		const ok = confirm("Are you sure to Delete?");
 		if(ok)
 		{
 			syllabusItems.splice(index, 1);
-			saveToCard();
+			reRenderCads(syllabusItems);
 		}
 	}
 		
-	function edit(index)
+	function editCourseForm(index)
 	{
-		flag = 1;
-		let obj = syllabusItems[index];
-		console.log(obj)
-		console.log(obj.syllabusDescription);
-		console.log(syllabusItems[index]["syllabusTitle"]);
+		const obj = syllabusItems[index];
+
 		$("#edit" + index).parent().replaceWith(addCourseForm);
-		$("#syllabusTitle").val(obj.syllabusTitle);
-		$("#syllabusDescription").val(obj.syllabusDescription);
-		$("#learningObjective").val(obj.learningObjective);
-		$(document).on('click', '#saveCourse', function()
-		{
-			if (flag == 1)
-			{
-				syllabusItems[index] = {"syllabusTitle": $("#syllabusTitle").val(), "syllabusDescription": $("#syllabusDescription").val(), "learningObjective":$("#learningObjective").val()};
-				saveToCard();
-				flag = 0;
-				$(this).parent().remove();
-			}
-		});
+		$('#Title').attr('id', `Title${index}`);
+		$('#Description').attr('id', `Description${index}`);
+		$('#Objective').attr('id', `Objective${index}`);
+
+		$(`#Title${index}`).val(obj.Title);
+		$(`#Description${index}`).val(obj.Description);
+		$(`#Objective${index}`).val(obj.Objective);
+		
+		$('#saveCourse').attr('id', `editCourse${index}`);
+		$(`#editCourse${index}`).attr('onclick', `editCourse(${index})`);
+		$('#addCourseForm').attr('id', `addCourseForm${index}`);
 	}
+
+	function editCourse(index)
+	{
+		syllabusItems[index] = {Title: $(`#Title${index}`).val(), Description: $(`#Description${index}`).val(), Objective: $(`#Objective${index}`).val()};
+		console.log(syllabusItems);
+		console.log(courseItem);
+		reRenderCads(syllabusItems);
+		$(`#editCourse${index}`).parent().remove();
+	}
+	
 	
 </script>
 </html>
