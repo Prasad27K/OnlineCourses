@@ -75,12 +75,21 @@
 		for( const obj of syllabusItems)
 		{
 			$("#card").append(`<div class="contents">
+<<<<<<< HEAD
 								<label id="index">${(counter + 1)}</label>
 								<label class="cardContent">${obj.Title}<br>${obj.Description}</label> 
 								<a href="#" id="delete" onclick="deleteCourse(${counter})">delete</a>
 								<a href="#" id="edit${counter}"  onclick="editCourseForm(${counter})">Edit</a>
 								</div>`);
 			counter++;
+=======
+						<label id="index">${(counter + 1)}</label>
+						<label class="cardContent">${obj.syllabusTitle}</label>
+						<br> <label class="cardContent">${obj.syllabusDescription}</label>
+						<a href="#" id="delete" onclick="deleteCourse(${counter})">delete</a>
+						<a href="#" id="edit${counter}"  onclick="edit(${counter})">Edit</a>
+						<div>`);
+>>>>>>> ca1862e26cc7df4dfcfe5345519e821e5e7e4301
 		}
 	}
 
