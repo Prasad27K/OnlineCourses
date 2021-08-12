@@ -27,14 +27,20 @@
 			<fieldset class="scheduler-border">
 			<legend class="scheduler-border">Syllabus Title</legend>
 			<input id="Title${index}" class="input-field" type="text" name="text" placeholder="Syllabus-title">
+			<br>
+			<label id="titleError" class="errorMesssage"></label>
 			</fieldset>
 			<fieldset>
 			<legend>Syllabus description</legend>
 			<input id="Description${index}" class="input-field" type="text" name="text" placeholder="Syllabus description ">
+			<br>
+			<label id="descriptionError" class="errorMesssage"></label>
 			</fieldset>
 			<fieldset>
 			<legend>Learning objective</legend>
 			<input id="Objective${index}" class="input-field" type="text" name="text" placeholder="Syllabus objective">
+			<br>
+			<label id="objectiveError" class="errorMesssage"></label>
 			</fieldset>
 			<button id="saveCourse" class="btn btn-info" onclick="save(${index})">Save</button>
 			<button id="cancel" class="btn btn-info">Cancel</button>
@@ -54,27 +60,51 @@
 	
 	function save(index)
 	{
-		readInputValues(index);
-		if(index == -1)
+		if(readInputValues(index))
 		{
-	   		syllabusItems.push(courseData);
-			console.log(syllabusItems);
-		}
-		else
-		{
-			syllabusItems[index] = courseData;
-	   		syllabusItems[index]["EditMode"] = "false";
+			if(index == -1)
+			{
+		   		syllabusItems.push(courseData);
+				console.log(syllabusItems);
+			}
+			else
+			{
+				syllabusItems[index] = courseData;
+		   		syllabusItems[index]["EditMode"] = "false";
+			}
+			reRenderCads(syllabusItems);
+			$(`#addCourseForm${index}`).remove();
 
 		}
-		reRenderCads(syllabusItems);
 
-		$(`#addCourseForm${index}`).remove();
 	};
 
 	function readInputValues(index)
 	{
 		courseData = {};
-		courseData = {Title: $(`#Title${index}`).val(), Description: $(`#Description${index}`).val(), Objective: $(`#Objective${index}`).val(), EditMode: "false"};
+		let title = $(`#Title${index}`).val();
+		description = $(`#Description${index}`).val();
+		objective = $(`#Objective${index}`).val();
+		if(title == "")
+		{
+			$("#titleError").text("Please enter syllabus title!");
+		}
+		else if(description == "")
+		{
+			$("#descriptionError").text("Please enter syllabus description!");
+
+		}
+		else if(objective == "")
+		{
+			$("#objectiveError").text("Please enter syllabus objective!");
+
+		}
+		else
+		{
+			courseData = {Title: title, Description: description, Objective: objective, EditMode: "false"};
+			return true;
+		}
+
 	}
 
 	function reRenderCads(syllabusItems)
