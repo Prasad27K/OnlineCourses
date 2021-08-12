@@ -43,21 +43,24 @@
 			<label id="objectiveError" class="errorMesssage"></label>
 			</fieldset>
 			<button id="saveCourse" class="btn btn-info" onclick="save(${index})">Save</button>
-			<button id="cancel" class="btn btn-info">Cancel</button>
+			<button id="cancel" class="btn btn-info" onclick="cancel(${index})">Cancel</button>
 			</div>`;
 		return addCourseForm;
 	}
+
 	function addCource(createForm)
 	{
 		const ShowForm = createForm(index);
 		$(".include").append(ShowForm);
 	}
 
-	$(document).on('click', '#cancel', function() {
+	function cancel(index)
+	{	
+		syllabusItems[index]["EditMode"] = "false";
 		reRenderCads(syllabusItems);
-		$(this).parent().remove();
-	});
-	
+		$(`#addCourseForm${index}`).remove();
+	}
+
 	function save(index)
 	{
 		if(readInputValues(index))
