@@ -52,13 +52,19 @@
 	{
 		const ShowForm = createForm(index);
 		$(".include").append(ShowForm);
+		$("#addCourse").attr("disabled", "true")
 	}
 
 	function cancel(index)
 	{	
-		syllabusItems[index]["EditMode"] = "false";
+		if(index >= 0)
+		{
+			syllabusItems[index]["EditMode"] = "false";
+		}
 		reRenderCads(syllabusItems);
 		$(`#addCourseForm${index}`).remove();
+		$("#addCourse").removeAttr("disabled")
+
 	}
 
 	function save(index)
@@ -76,6 +82,7 @@
 		   		syllabusItems[index]["EditMode"] = "false";
 			}
 			reRenderCads(syllabusItems);
+			$("#addCourse").removeAttr("disabled")
 			$(`#addCourseForm${index}`).remove();
 
 		}
@@ -86,8 +93,8 @@
 	{
 		courseData = {};
 		let title = $(`#Title${index}`).val();
-		description = $(`#Description${index}`).val();
-		objective = $(`#Objective${index}`).val();
+		let description = $(`#Description${index}`).val();
+		let objective = $(`#Objective${index}`).val();
 		if(title == "")
 		{
 			$("#titleError").text("Please enter syllabus title!");
