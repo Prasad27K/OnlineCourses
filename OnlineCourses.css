@@ -26,20 +26,20 @@
 a
 {
 	float: right;
+	margin: 20px;
 	padding-right: 10px;
 }
 
 .contents
 {
-	float: left;
-	border: 5px solid;
+	border: 1px solid;
 	margin-top: 10px;
-	height: 50px;
 	width: 500px;
 }
 
 .cardContent
 {
+	margin: 10px;
 	padding-left: 20px;
 }
 
@@ -71,4 +71,10 @@ legend
 	border-radius: 4px; 
 	padding: 5px 5px 5px 10px; 
 	background-color: #ffffff;
+}
+
+#index
+{
+	padding-bottom: 10px;
+	margin: 10px;
 }
