@@ -11,34 +11,32 @@
 </head>
 <body>
 	<div id="mainCard">
-		
-		<div id="card" class="include">
-			<div id="header"><button id="addCourse" class="btn btn-info" onclick="addCource(createForm)">Add Course</button></div>
-		</div>
+		<div id="header"><button id="addCourse" class="btn btn-info" onclick="addCource()">Add Course</button></div>
+		<div id="card" class="include"></div>
 	</div>
 </body>
 <script type="text/javascript">
 	var syllabusItems = [];
 	var courseData = {};
-	var index = -1;
-	function createForm(index)
+	
+	function createForm(index, obj)
 	{
 		let addCourseForm = `<div id="addCourseForm${index}" class="addCourseForm">
 			<fieldset class="scheduler-border">
-			<legend class="scheduler-border">Syllabus Title</legend>
-			<input id="Title${index}" class="input-field" type="text" name="text" placeholder="Syllabus-title">
+			<legend >Syllabus Title</legend>
+			<input id="Title${index}" class="input-field" type="text" value="${obj.Title}" name="text" placeholder="Syllabus-title">
 			<br>
 			<label id="titleError" class="errorMesssage"></label>
 			</fieldset>
 			<fieldset>
 			<legend>Syllabus description</legend>
-			<input id="Description${index}" class="input-field" type="text" name="text" placeholder="Syllabus description ">
+			<input id="Description${index}" class="input-field" type="text" value="${obj.Description}" name="text" placeholder="Syllabus description ">
 			<br>
 			<label id="descriptionError" class="errorMesssage"></label>
 			</fieldset>
 			<fieldset>
 			<legend>Learning objective</legend>
-			<input id="Objective${index}" class="input-field" type="text" name="text" placeholder="Syllabus objective">
+			<input id="Objective${index}" class="input-field" type="text" value="${obj.Objective}" name="text" placeholder="Syllabus objective">
 			<br>
 			<label id="objectiveError" class="errorMesssage"></label>
 			</fieldset>
@@ -48,91 +46,52 @@
 		return addCourseForm;
 	}
 
-	function addCource(createForm)
+	function addCource()
 	{
-		const ShowForm = createForm(index);
-		$(".include").append(ShowForm);
-		$("#addCourse").attr("disabled", "true")
+		const emptyObject = {Title: "", Description: "", Objective: "", EditMode: "true"}
+		syllabusItems.push(emptyObject);
+		reRenderCads(syllabusItems);
 	}
 
 	function cancel(index)
-	{	
-		if(index >= 0)
-		{
-			syllabusItems[index]["EditMode"] = "false";
-		}
+	{
+		syllabusItems[index]["EditMode"] = "false";
 		reRenderCads(syllabusItems);
 		$(`#addCourseForm${index}`).remove();
-		$("#addCourse").removeAttr("disabled")
-
 	}
-
+	
 	function save(index)
 	{
-		if(readInputValues(index))
-		{
-			if(index == -1)
-			{
-		   		syllabusItems.push(courseData);
-				console.log(syllabusItems);
-			}
-			else
-			{
-				syllabusItems[index] = courseData;
-		   		syllabusItems[index]["EditMode"] = "false";
-			}
-			reRenderCads(syllabusItems);
-			$("#addCourse").removeAttr("disabled")
-			$(`#addCourseForm${index}`).remove();
-
-		}
-
-	};
-
-	function readInputValues(index)
-	{
 		courseData = {};
-		let title = $(`#Title${index}`).val();
-		let description = $(`#Description${index}`).val();
-		let objective = $(`#Objective${index}`).val();
-		if(title == "")
-		{
-			$("#titleError").text("Please enter syllabus title!");
-		}
-		else if(description == "")
-		{
-			$("#descriptionError").text("Please enter syllabus description!");
-
-		}
-		else if(objective == "")
-		{
-			$("#objectiveError").text("Please enter syllabus objective!");
-
-		}
-		else
-		{
-			courseData = {Title: title, Description: description, Objective: objective, EditMode: "false"};
-			return true;
-		}
+		courseData = {Title: $(`#Title${index}`).val(), Description: $(`#Description${index}`).val(), Objective: $(`#Objective${index}`).val(), EditMode: "false"};
+		syllabusItems[index] = courseData;
+	   	syllabusItems[index]["EditMode"] = "false";
+		reRenderCads(syllabusItems);
+		$(`#addCourseForm${index}`).remove();
 
 	}
 
 	function reRenderCads(syllabusItems)
 	{
-		$(".contents").remove();
-		let counter = 0;
+		$(".include").html("");
+		let index = 0;
 		for( const obj of syllabusItems)
 		{
 			if(obj.EditMode == "false")
 			{
-				$("#card").append(`<div class="contents">
-									<label class="rounded" id="index">${(counter + 1)}</label>
+				var HTMLElement = `<div class="contents">
+									<label class="rounded" id="index">${(index + 1)}</label>
 									<label class="cardContent">${obj.Title}<br>${obj.Description}</label> 
-									<a href="#" id="delete" onclick="deleteCourse(${counter})">delete</a>
-									<a href="#" id="edit${counter}"  onclick="editCourseForm(${counter})">Edit</a>
-									</div>`);
-				counter++;
+									<a href="#" id="delete" onclick="deleteCourse(${index})">delete</a>
+									<a href="#" id="edit${index}"  onclick="editCourseForm(${index})">Edit</a>
+									</div>`;
 			}
+			else
+			{
+				var HTMLElement = createForm(index, obj)
+			}
+			$(".include").append(HTMLElement);
+			index++;
 		}
 	}
 
@@ -149,12 +108,8 @@
 	function editCourseForm(index)
 	{
 		const obj = syllabusItems[index];
-		const ShowForm = createForm(index);
-		$(`#edit${index}`).parent().replaceWith(ShowForm);
 		obj.EditMode = "true"
-		$(`#Title${index}`).val(obj.Title);
-		$(`#Description${index}`).val(obj.Description);
-		$(`#Objective${index}`).val(obj.Objective);
+		reRenderCads(syllabusItems);	
 	}
 
 </script>

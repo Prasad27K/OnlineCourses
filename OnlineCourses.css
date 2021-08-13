@@ -2,6 +2,8 @@
 {
 	height: 500px;
 	width: 800px;
+	margin-right: 200px;
+	/*background-color: skyblue;*/
 }
 
 #addCourse
@@ -30,6 +32,12 @@ a
 	padding-right: 10px;
 }
 
+#saveCourse
+{
+	margin-left: 350px;
+	margin-right: 20px;
+}
+
 .contents
 {
 	border: 1px solid;
@@ -52,25 +60,24 @@ a
 
 fieldset 
 {
-	border: 1px solid #ddd !important;
+	border: 2px solid;
 	margin: 0;
 	padding: 10px;       
 	position: relative;
-	border-radius:4px;
-	background-color:#f5f5f5;
-	padding-left:10px!important;
+	margin:10px;
 }	
 
 legend
 {
-	font-size:14px;
+	font-size:20px;
 	font-weight:bold;
 	margin-bottom: 0px; 
-	width: 35%; 
-	border: 1px solid #ddd;
-	border-radius: 4px; 
-	padding: 5px 5px 5px 10px; 
-	background-color: #ffffff;
+	width: 100%; 
+	border: 1px;
+	padding:10px;
+	border-width: 20px unset;
+	border-collapse: 10px;
+	min-width: 20%;
 }
 
 #index
