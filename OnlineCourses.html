@@ -11,7 +11,7 @@
 </head>
 <body>
 	<div id="mainCard">
-		<div id="header"><button id="addCourse" class="btn btn-info" onclick="addCource()">Add Course</button></div>
+		<div id="header"><button id="addCourse" class="btn btn-info" onclick="addCourse()">Add Course</button></div>
 		<div id="card" class="include"></div>
 	</div>
 </body>
@@ -22,21 +22,22 @@
 	function createForm(index, obj)
 	{
 		let addCourseForm = `<div id="addCourseForm${index}" class="addCourseForm">
+			<label class="" >Syllabus${index + 1}</label>
 			<fieldset class="scheduler-border">
 			<legend >Syllabus Title</legend>
-			<input id="Title${index}" class="input-field" type="text" value="${obj.Title}" name="text" placeholder="Syllabus-title">
+			<input id="title${index}" class="input-field" type="text" value="${obj.Title}" name="title${index}" placeholder="Syllabus-title">
 			<br>
 			<label id="titleError" class="errorMesssage"></label>
 			</fieldset>
 			<fieldset>
 			<legend>Syllabus description</legend>
-			<input id="Description${index}" class="input-field" type="text" value="${obj.Description}" name="text" placeholder="Syllabus description ">
+			<input id="description${index}" class="input-field" type="text" value="${obj.Description}" name="description${index}" placeholder="Syllabus description ">
 			<br>
 			<label id="descriptionError" class="errorMesssage"></label>
 			</fieldset>
 			<fieldset>
 			<legend>Learning objective</legend>
-			<input id="Objective${index}" class="input-field" type="text" value="${obj.Objective}" name="text" placeholder="Syllabus objective">
+			<input id="objective${index}" class="input-field" type="text" value="${obj.Objective}" name="objective${index}" placeholder="Syllabus objective">
 			<br>
 			<label id="objectiveError" class="errorMesssage"></label>
 			</fieldset>
@@ -46,34 +47,34 @@
 		return addCourseForm;
 	}
 
-	function addCource()
+	function addCourse()
 	{
 		const emptyObject = {Title: "", Description: "", Objective: "", EditMode: "true"};
 		syllabusItems.push(emptyObject);
-		reRenderCads(syllabusItems);
+		reRender(syllabusItems);
 	}
 
 	function cancel(index)
 	{
-		const obj = syllabusItems[index]
+		const obj = syllabusItems[index];
 		if((obj.Title == "") && (obj.Description == "") && (obj.Objective  == ""))
 		{
 			syllabusItems.splice(index, 1);
 		}
 		obj.EditMode = "false";
-		reRenderCads(syllabusItems);
+		reRender(syllabusItems);
 	}
 	
 	function save(index)
 	{
 		courseData = {};
-		courseData = {Title: $(`#Title${index}`).val(), Description: $(`#Description${index}`).val(), Objective: $(`#Objective${index}`).val(), EditMode: "false"};
+		courseData = {Title: $(`#title${index}`).val(), Description: $(`#description${index}`).val(), Objective: $(`#objective${index}`).val(), EditMode: "false"};
 		syllabusItems[index] = courseData;
 	   	syllabusItems[index]["EditMode"] = "false";
-		reRenderCads(syllabusItems);
+		reRender(syllabusItems);
 	}
 
-	function reRenderCads(syllabusItems)
+	function reRender(syllabusItems)
 	{
 		$(".include").html("");
 		let index = 0;
@@ -90,16 +91,17 @@
 			$(".include").append(HTMLElement);
 			index++;
 		}
+
 	}
 
 	function createCard(index, obj)
 	{
 		const card = `<div class="contents">
-						<label class="rounded" id="index">${(index + 1)}</label>
-						<label class="cardContent">${obj.Title}<br>${obj.Description}</label> 
-						<a href="#" id="delete" onclick="deleteCourse(${index})">delete</a>
-						<a href="#" id="edit${index}"  onclick="edit(${index})">Edit</a>
-						</div>`;
+				<label class="rounded" id="index">${(index + 1)}</label>
+				<label class="cardContent">${obj.Title}<br>${obj.Description}</label> 
+				<a href="#" id="delete" onclick="deleteCourse(${index})">delete</a>
+				<a href="#" id="edit${index}" onclick="edit(${index})">Edit</a>
+				</div>`;
 		return card;
 	}
 
@@ -109,15 +111,15 @@
 		if(ok)
 		{
 			syllabusItems.splice(index, 1);
-			reRenderCads(syllabusItems);
+			reRender(syllabusItems);
 		}
 	}
-		
+
 	function edit(index)
 	{
 		const obj = syllabusItems[index];
 		obj.EditMode = "true"
-		reRenderCads(syllabusItems);	
+		reRender(syllabusItems);	
 	}
 
 </script>

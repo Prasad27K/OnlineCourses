@@ -1,28 +1,9 @@
 #mainCard
 {
+	float: right;
 	height: 500px;
 	width: 800px;
 	margin-right: 200px;
-	/*background-color: skyblue;*/
-}
-
-#addCourse
-{
-	margin-left: 400px;
-	height: 50px;
-	width: 100px;
-}
-
-#card
-{
-	float: left;
-}
-
-.input-field
-{
-	outline: 0px;
-	border: 0px;
-	width: 500px;
 }
 
 a
@@ -32,17 +13,17 @@ a
 	padding-right: 10px;
 }
 
-#saveCourse
+#addCourse
 {
-	margin-left: 350px;
-	margin-right: 20px;
+	margin-left: 700px;
+	height: 50px;
+	width: 100px;
 }
 
-.contents
+#saveCourse
 {
-	border: 1px solid;
-	margin-top: 10px;
-	width: 500px;
+	margin-left: 640px;
+	margin-right: 20px;
 }
 
 .cardContent
@@ -51,42 +32,38 @@ a
 	padding-left: 20px;
 }
 
-.addCourseForm
+.input-field
 {
-	margin-top: 10px;
-	float: left;
+	outline: 0px;
+	border: 0px;
+	width: 500px;
+	border-radius: 10px;
+	margin-left: 30px;
+}
+
+.contents
+{
 	border: 1px solid;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 fieldset 
 {
-	border: 2px solid;
-	margin: 0;
-	padding: 10px;       
+	border: 1px solid;
+	margin: 5px;
 	position: relative;
-	margin:10px;
-}	
+	background-color: lightblue;
+}
 
 legend
 {
 	font-size:20px;
 	font-weight:bold;
-	margin-bottom: 0px; 
-	width: 100%; 
-	border: 1px;
-	padding:10px;
-	border-width: 20px unset;
-	border-collapse: 10px;
-	min-width: 20%;
-}
-
-#index
-{
-	padding-bottom: 10px;
-	margin: 10px;
-}
-
-.errorMesssage
-{
-	color: red;
+	width: 250px; 
+	border: 1px solid;
+	padding-left: 20px;
+	border-radius: 20px;
+	background-color: lightblue;
+	margin-left: 10px;
 }
