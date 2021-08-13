@@ -48,16 +48,20 @@
 
 	function addCource()
 	{
-		const emptyObject = {Title: "", Description: "", Objective: "", EditMode: "true"}
+		const emptyObject = {Title: "", Description: "", Objective: "", EditMode: "true"};
 		syllabusItems.push(emptyObject);
 		reRenderCads(syllabusItems);
 	}
 
 	function cancel(index)
 	{
-		syllabusItems[index]["EditMode"] = "false";
+		const obj = syllabusItems[index]
+		if((obj.Title == "") && (obj.Description == "") && (obj.Objective  == ""))
+		{
+			syllabusItems.splice(index, 1);
+		}
+		obj.EditMode = "false";
 		reRenderCads(syllabusItems);
-		$(`#addCourseForm${index}`).remove();
 	}
 	
 	function save(index)
@@ -67,8 +71,6 @@
 		syllabusItems[index] = courseData;
 	   	syllabusItems[index]["EditMode"] = "false";
 		reRenderCads(syllabusItems);
-		$(`#addCourseForm${index}`).remove();
-
 	}
 
 	function reRenderCads(syllabusItems)
@@ -79,12 +81,7 @@
 		{
 			if(obj.EditMode == "false")
 			{
-				var HTMLElement = `<div class="contents">
-									<label class="rounded" id="index">${(index + 1)}</label>
-									<label class="cardContent">${obj.Title}<br>${obj.Description}</label> 
-									<a href="#" id="delete" onclick="deleteCourse(${index})">delete</a>
-									<a href="#" id="edit${index}"  onclick="editCourseForm(${index})">Edit</a>
-									</div>`;
+				var HTMLElement = createCard(index, obj)
 			}
 			else
 			{
@@ -93,6 +90,17 @@
 			$(".include").append(HTMLElement);
 			index++;
 		}
+	}
+
+	function createCard(index, obj)
+	{
+		const card = `<div class="contents">
+						<label class="rounded" id="index">${(index + 1)}</label>
+						<label class="cardContent">${obj.Title}<br>${obj.Description}</label> 
+						<a href="#" id="delete" onclick="deleteCourse(${index})">delete</a>
+						<a href="#" id="edit${index}"  onclick="edit(${index})">Edit</a>
+						</div>`;
+		return card;
 	}
 
 	function deleteCourse(index)
@@ -105,7 +113,7 @@
 		}
 	}
 		
-	function editCourseForm(index)
+	function edit(index)
 	{
 		const obj = syllabusItems[index];
 		obj.EditMode = "true"
