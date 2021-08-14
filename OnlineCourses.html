@@ -16,6 +16,7 @@
 	</div>
 </body>
 <script type="text/javascript">
+
 	var syllabusItems = [];
 	var courseData = {};
 	
@@ -26,21 +27,30 @@
 			<fieldset class="scheduler-border">
 			<legend >Syllabus Title</legend>
 			<input id="title${index}" class="input-field" type="text" value="${obj.Title}" name="title${index}" placeholder="Syllabus-title">
-			<br>
-			<label id="titleError" class="errorMesssage"></label>
-			</fieldset>
+			<br>`;
+			if(!obj.isTitleValid)
+			{
+				addCourseForm += `<label id="titleError" class="errorMesssage">Please enter Syllabus-title</label>`;
+			}
+			addCourseForm += `</fieldset>
 			<fieldset>
 			<legend>Syllabus description</legend>
 			<input id="description${index}" class="input-field" type="text" value="${obj.Description}" name="description${index}" placeholder="Syllabus description ">
-			<br>
-			<label id="descriptionError" class="errorMesssage"></label>
-			</fieldset>
+			<br>`;
+			if(!obj.isDescreptionValid)
+			{
+				addCourseForm += `<label id="descriptionError" class="errorMesssage">Please enter Syllabus-description</label>`;
+			}
+			addCourseForm += `</fieldset>
 			<fieldset>
 			<legend>Learning objective</legend>
 			<input id="objective${index}" class="input-field" type="text" value="${obj.Objective}" name="objective${index}" placeholder="Syllabus objective">
-			<br>
-			<label id="objectiveError" class="errorMesssage"></label>
-			</fieldset>
+			<br>`;
+			if(!obj.isObjectiveValid)
+			{
+				addCourseForm += `<label id="objectiveError" class="errorMesssage">Please enter Syllabus-objective</label>`;
+			}
+			addCourseForm += `</fieldset>
 			<button id="saveCourse" class="btn btn-info" onclick="save(${index})">Save</button>
 			<button id="cancel" class="btn btn-info" onclick="cancel(${index})">Cancel</button>
 			</div>`;
@@ -49,7 +59,7 @@
 
 	function addCourse()
 	{
-		const emptyObject = {Title: "", Description: "", Objective: "", EditMode: "true"};
+		const emptyObject = {Title: "", Description: "", Objective: "", EditMode: true, isTitleValid: true, isDescreptionValid: true, isObjectiveValid: true};
 		syllabusItems.push(emptyObject);
 		reRender(syllabusItems);
 	}
@@ -61,16 +71,18 @@
 		{
 			syllabusItems.splice(index, 1);
 		}
-		obj.EditMode = "false";
+		obj.EditMode = false;
 		reRender(syllabusItems);
 	}
 	
 	function save(index)
 	{
-		courseData = {};
-		courseData = {Title: $(`#title${index}`).val(), Description: $(`#description${index}`).val(), Objective: $(`#objective${index}`).val(), EditMode: "false"};
-		syllabusItems[index] = courseData;
-	   	syllabusItems[index]["EditMode"] = "false";
+		if(	formValidation(index))
+		{
+			courseData = {};
+			courseData = {Title: $(`#title${index}`).val(), Description: $(`#description${index}`).val(), Objective: $(`#objective${index}`).val(), EditMode: false, isTitleValid: true, isDescreptionValid: true, isObjectiveValid: true};
+			syllabusItems[index] = courseData;
+		}
 		reRender(syllabusItems);
 	}
 
@@ -80,7 +92,7 @@
 		let index = 0;
 		for( const obj of syllabusItems)
 		{
-			if(obj.EditMode == "false")
+			if(obj.EditMode == false)
 			{
 				var HTMLElement = createCard(index, obj)
 			}
@@ -91,7 +103,6 @@
 			$(".include").append(HTMLElement);
 			index++;
 		}
-
 	}
 
 	function createCard(index, obj)
@@ -118,9 +129,34 @@
 	function edit(index)
 	{
 		const obj = syllabusItems[index];
-		obj.EditMode = "true"
+		obj.EditMode = true;
 		reRender(syllabusItems);	
 	}
 
+	function formValidation(index)
+	{
+		var isTrue = true;
+		const obj = syllabusItems[index];
+		if($(`#title${index}`).val() == "")
+		{
+			obj.isTitleValid = false;
+			isTrue = false;
+
+		}
+
+		if($(`#description${index}`).val() == "")
+		{
+			obj.isDescreptionValid = false;
+			isTrue = false;
+		}
+		
+		if($(`#objective${index}`).val() == "")
+		{
+			obj.isObjectiveValid = false;
+			isTrue = false;
+		}
+		return ((!isTrue) ? false : true);
+
+	}
 </script>
 </html>

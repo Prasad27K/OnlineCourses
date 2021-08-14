@@ -36,9 +36,12 @@ a
 {
 	outline: 0px;
 	border: 0px;
-	width: 500px;
+	width: 700px;
+	height: 40px;
+	text-align: center;
 	border-radius: 10px;
 	margin-left: 30px;
+	margin-bottom: 10px;
 }
 
 .contents
@@ -66,4 +69,10 @@ legend
 	border-radius: 20px;
 	background-color: lightblue;
 	margin-left: 10px;
+}
+
+.errorMesssage
+{
+	color: red;
+	margin-left: 25px;
 }
