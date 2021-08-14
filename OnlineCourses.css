@@ -11,6 +11,7 @@ a
 	float: right;
 	margin: 20px;
 	padding-right: 10px;
+	padding-top: 20px;
 }
 
 #addCourse
@@ -28,8 +29,10 @@ a
 
 .cardContent
 {
-	margin: 10px;
+	margin: 20px 10px 5px 5px;
 	padding-left: 20px;
+	width: 100px;
+	text-align: center;
 }
 
 .input-field
@@ -41,7 +44,12 @@ a
 	text-align: center;
 	border-radius: 10px;
 	margin-left: 30px;
-	margin-bottom: 10px;
+	margin-bottom: 15px;
+}
+
+.text-secondary
+{
+	border-radius: 50px;
 }
 
 .contents
@@ -75,4 +83,26 @@ legend
 {
 	color: red;
 	margin-left: 25px;
+}
+
+.syllabusNumber
+{
+	background-color: skyblue;
+	height: 40px;
+	width: 100px;
+	text-align: center;
+	font-size: 20px;
+	padding-top: 5px;
+	margin-left: 10px;
+	border-radius: 10px;
+}
+.index
+{
+	margin: 10px 10px 20px;
+	background-color: gray;
+	height: 40px;
+	width: 40px;
+	padding-top: 10px;
+	padding-left: 15px;
+	border-radius: 50%;
 }

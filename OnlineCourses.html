@@ -23,7 +23,7 @@
 	function createForm(index, obj)
 	{
 		let addCourseForm = `<div id="addCourseForm${index}" class="addCourseForm">
-			<label class="" >Syllabus${index + 1}</label>
+			<label class="syllabusNumber">Syllabus${index + 1}</label>
 			<fieldset class="scheduler-border">
 			<legend >Syllabus Title</legend>
 			<input id="title${index}" class="input-field" type="text" value="${obj.Title}" name="title${index}" placeholder="Syllabus-title">
@@ -32,6 +32,7 @@
 			{
 				addCourseForm += `<label id="titleError" class="errorMesssage">Please enter Syllabus-title</label>`;
 			}
+
 			addCourseForm += `</fieldset>
 			<fieldset>
 			<legend>Syllabus description</legend>
@@ -77,11 +78,12 @@
 	
 	function save(index)
 	{
-		if(	formValidation(index))
+		courseData = {};
+		courseData = {Title: $(`#title${index}`).val(), Description: $(`#description${index}`).val(), Objective: $(`#objective${index}`).val(), EditMode: false, isTitleValid: true, isDescreptionValid: true, isObjectiveValid: true};
+		syllabusItems[index] = courseData;
+		if(	!formValidation(index))
 		{
-			courseData = {};
-			courseData = {Title: $(`#title${index}`).val(), Description: $(`#description${index}`).val(), Objective: $(`#objective${index}`).val(), EditMode: false, isTitleValid: true, isDescreptionValid: true, isObjectiveValid: true};
-			syllabusItems[index] = courseData;
+			syllabusItems[index]["EditMode"] = true;
 		}
 		reRender(syllabusItems);
 	}
@@ -94,6 +96,7 @@
 		{
 			if(obj.EditMode == false)
 			{
+	
 				var HTMLElement = createCard(index, obj)
 			}
 			else
@@ -108,7 +111,7 @@
 	function createCard(index, obj)
 	{
 		const card = `<div class="contents">
-				<label class="rounded" id="index">${(index + 1)}</label>
+				<label class="index" id="index">${(index + 1)}</label>
 				<label class="cardContent">${obj.Title}<br>${obj.Description}</label> 
 				<a href="#" id="delete" onclick="deleteCourse(${index})">delete</a>
 				<a href="#" id="edit${index}" onclick="edit(${index})">Edit</a>
@@ -135,13 +138,12 @@
 
 	function formValidation(index)
 	{
-		var isTrue = true;
 		const obj = syllabusItems[index];
+		var isTrue = true;
 		if($(`#title${index}`).val() == "")
 		{
 			obj.isTitleValid = false;
 			isTrue = false;
-
 		}
 
 		if($(`#description${index}`).val() == "")
@@ -156,7 +158,7 @@
 			isTrue = false;
 		}
 		return ((!isTrue) ? false : true);
-
 	}
+
 </script>
 </html>
