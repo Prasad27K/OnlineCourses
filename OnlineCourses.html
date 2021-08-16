@@ -32,7 +32,6 @@
 			{
 				addCourseForm += `<label id="titleError" class="errorMesssage">Please enter Syllabus-title</label>`;
 			}
-
 			addCourseForm += `</fieldset>
 			<fieldset>
 			<legend>Syllabus description</legend>
@@ -78,12 +77,11 @@
 	
 	function save(index)
 	{
-		courseData = {};
-		courseData = {Title: $(`#title${index}`).val(), Description: $(`#description${index}`).val(), Objective: $(`#objective${index}`).val(), EditMode: false, isTitleValid: true, isDescreptionValid: true, isObjectiveValid: true};
-		syllabusItems[index] = courseData;
-		if(	!formValidation(index))
-		{
-			syllabusItems[index]["EditMode"] = true;
+		if(formValidation(index))
+		{				
+			courseData = {};
+			courseData = {Title: $(`#title${index}`).val(), Description: $(`#description${index}`).val(), Objective: $(`#objective${index}`).val(), EditMode: false, isTitleValid: true, isDescreptionValid: true, isObjectiveValid: true};
+			syllabusItems[index] = courseData;
 		}
 		reRender(syllabusItems);
 	}
@@ -113,8 +111,8 @@
 		const card = `<div class="contents">
 				<label class="index" id="index">${(index + 1)}</label>
 				<label class="cardContent">${obj.Title}<br>${obj.Description}</label> 
-				<a href="#" id="delete" onclick="deleteCourse(${index})">delete</a>
-				<a href="#" id="edit${index}" onclick="edit(${index})">Edit</a>
+				<a href="#" id="delete" onclick="deleteCourse(${index})"><span class='glyphicon glyphicon-trash'></a>
+				<a href="#" id="edit${index}" onclick="edit(${index})"><span class='glyphicon glyphicon-edit'></span></a>
 				</div>`;
 		return card;
 	}
@@ -139,25 +137,25 @@
 	function formValidation(index)
 	{
 		const obj = syllabusItems[index];
-		var isTrue = true;
+		var isValid = true;
 		if($(`#title${index}`).val() == "")
 		{
 			obj.isTitleValid = false;
-			isTrue = false;
+			isValid = false;
 		}
 
 		if($(`#description${index}`).val() == "")
 		{
 			obj.isDescreptionValid = false;
-			isTrue = false;
+			isValid = false;
 		}
 		
 		if($(`#objective${index}`).val() == "")
 		{
 			obj.isObjectiveValid = false;
-			isTrue = false;
+			isValid = false;
 		}
-		return ((!isTrue) ? false : true);
+		return ((!isValid) ? false : true);
 	}
 
 </script>
