@@ -16,8 +16,25 @@
 	</div>
 </body>
 <script type="text/javascript">
-
 	var syllabusItems = [];
+	$(document).ready(function(){
+		$.ajax({
+			url: 'ShowData.php',
+			type: 'get',
+			dataType: 'JSON',
+			success: function(response){
+				syllabusItems = response;
+				for(let obj of syllabusItems)
+				{
+					obj["editMode"] = false;
+					obj["isTitleValid"] = true;
+					obj["isDescreptionValid"] = true;
+					obj["isObjectiveValid"] = true;
+				}
+				reRender(syllabusItems);
+			}
+		});
+	});
 	var courseData = {};
 	
 	function createForm(index, obj)
@@ -26,7 +43,7 @@
 			<label class="syllabusNumber">Syllabus${index + 1}</label>
 			<fieldset class="scheduler-border">
 			<legend >Syllabus Title</legend>
-			<input id="title${index}" class="input-field" type="text" value="${obj.Title}" name="title${index}" placeholder="Syllabus-title">
+			<input id="title${index}" class="input-field" type="text" value="${obj.title}" name="title${index}" placeholder="Syllabus-title">
 			<br>`;
 			if(!obj.isTitleValid)
 			{
@@ -35,7 +52,7 @@
 			addCourseForm += `</fieldset>
 			<fieldset>
 			<legend>Syllabus description</legend>
-			<input id="description${index}" class="input-field" type="text" value="${obj.Description}" name="description${index}" placeholder="Syllabus description ">
+			<input id="description${index}" class="input-field" type="text" value="${obj.description}" name="description${index}" placeholder="Syllabus description ">
 			<br>`;
 			if(!obj.isDescreptionValid)
 			{
@@ -44,7 +61,7 @@
 			addCourseForm += `</fieldset>
 			<fieldset>
 			<legend>Learning objective</legend>
-			<input id="objective${index}" class="input-field" type="text" value="${obj.Objective}" name="objective${index}" placeholder="Syllabus objective">
+			<input id="objective${index}" class="input-field" type="text" value="${obj.objective}" name="objective${index}" placeholder="Syllabus objective">
 			<br>`;
 			if(!obj.isObjectiveValid)
 			{
@@ -59,7 +76,7 @@
 
 	function addCourse()
 	{
-		const emptyObject = {Title: "", Description: "", Objective: "", EditMode: true, isTitleValid: true, isDescreptionValid: true, isObjectiveValid: true};
+		const emptyObject = {id: syllabusItems.length, title: "", description: "", objective: "", status: 1, editMode: true, isTitleValid: true, isDescreptionValid: true, isObjectiveValid: true};
 		syllabusItems.push(emptyObject);
 		reRender(syllabusItems);
 	}
@@ -67,23 +84,35 @@
 	function cancel(index)
 	{
 		const obj = syllabusItems[index];
-		if((obj.Title == "") && (obj.Description == "") && (obj.Objective  == ""))
+		if((obj.title == "") && (obj.description == "") && (obj.objective  == ""))
 		{
 			syllabusItems.splice(index, 1);
 		}
-		obj.EditMode = false;
+		obj.editMode = false;
 		reRender(syllabusItems);
 	}
 	
 	function save(index)
 	{
-		if(formValidation(index))
-		{				
-			courseData = {};
-			courseData = {Title: $(`#title${index}`).val(), Description: $(`#description${index}`).val(), Objective: $(`#objective${index}`).val(), EditMode: false, isTitleValid: true, isDescreptionValid: true, isObjectiveValid: true};
-			syllabusItems[index] = courseData;
-		}
-		reRender(syllabusItems);
+		var id = syllabusItems[index]["id"];
+		var title = $(`#title${index}`).val();
+		var description = $(`#description${index}`).val();
+		var objective = $(`#objective${index}`).val();
+		$.ajax(
+		{	type: "POST",
+			url: "Insert.php",
+			data: {id:id, title:title, description:description, objective:objective}
+		}).done(function(message)
+		{
+			syllabusItems[index] = message;
+			let obj = syllabusItems[index];
+			obj["editMode"] = false;
+			obj["isTitleValid"] = true;
+			obj["isDescreptionValid"] = true;
+			obj["isObjectiveValid"] = true;
+
+			reRender(syllabusItems);
+		})
 	}
 
 	function reRender(syllabusItems)
@@ -92,16 +121,18 @@
 		let index = 0;
 		for( const obj of syllabusItems)
 		{
-			if(obj.EditMode == false)
+			 if(obj.status == 1)
 			{
-	
-				var HTMLElement = createCard(index, obj)
+				if(obj.editMode == false)
+				{
+					var HTMLElement = createCard(index, obj)
+				}
+				else
+				{
+					var HTMLElement = createForm(index, obj)
+				}
+				$(".include").append(HTMLElement);
 			}
-			else
-			{
-				var HTMLElement = createForm(index, obj)
-			}
-			$(".include").append(HTMLElement);
 			index++;
 		}
 	}
@@ -109,8 +140,8 @@
 	function createCard(index, obj)
 	{
 		const card = `<div class="contents">
-				<label class="index" id="index">${(index + 1)}</label>
-				<label class="cardContent">${obj.Title}<br>${obj.Description}</label> 
+				<label class="index" id="index">${obj.id}</label>
+				<label class="cardContent">${obj.title}<br>${obj.description}</label> 
 				<a href="#" id="delete" onclick="deleteCourse(${index})"><span class='glyphicon glyphicon-trash'></a>
 				<a href="#" id="edit${index}" onclick="edit(${index})"><span class='glyphicon glyphicon-edit'></span></a>
 				</div>`;
@@ -122,15 +153,27 @@
 		const ok = confirm("Are you sure to Delete?");
 		if(ok)
 		{
-			syllabusItems.splice(index, 1);
-			reRender(syllabusItems);
+			const obj = syllabusItems[index];
+			let id = obj.id;
+			$.ajax(
+			{	type: "POST",
+				url: "delete.php",
+				data: {id:id}
+			}).done(function(message)
+			{	
+				if(message == 1)
+				{
+					obj.status = 0;	
+					reRender(syllabusItems);
+				}
+			});
 		}
 	}
 
 	function edit(index)
 	{
 		const obj = syllabusItems[index];
-		obj.EditMode = true;
+		obj.editMode = true;
 		reRender(syllabusItems);	
 	}
 
