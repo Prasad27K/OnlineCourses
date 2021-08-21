@@ -1,0 +1,60 @@
+<!-- Login page -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Authentication</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="OnlineCourses.css"></link>
+	<script type="text/javascript">
+		function login() {
+            let userName = $("#user").val();
+            let password = $("#password").val();
+            let formData = {userName: userName, password: password};
+            $.ajax({
+                url: "Login.php",
+                method: "POST",
+                dataType: "JSON",
+                contentType: "application/JSON",
+                data: JSON.stringify(formData),
+                success: function()
+                {
+                    alert("Login Sussessful")
+                    $("#message").html("Login Sussessful");
+                    window.location.href = 'OnlineCourses.html';
+                },
+                error: function(jqxhr, exception){
+                    let errorMessage = '';
+                    if (jqxhr.status == 400) 
+                    {
+                        errorMessage = "Incorrect UserName/Password.";
+                    }
+                    else if (jqxhr.status == 500)
+                    {
+                        errorMessage = "Internal Server Error.";
+                    }
+                    else if (jqxhr.status == 404)
+                    {
+                        errorMessage = "Request not found.";
+                    }
+                    else
+                    {
+                        errorMessage = 'Uncaught Error.\n', jqxhr.responseText;
+                    }
+                    $("#message").html(errorMessage);
+                }
+            });
+        }
+	</script>
+</head>
+<body>
+	<div id="loginForm">
+		<p id="message"></p>
+		<input type="text" id="user" class="user" name="userName" placeholder="Enter User Name" required>
+		<br><br>
+		<input type="password" id="password" class="user" name="password" placeholder="Enter Password" required>
+		<br><br>
+		<input type="button" value="Login" onclick="login()" name="login">
+	</div>
+</body>
+</html>

@@ -5,42 +5,73 @@
 	<meta charset="utf-8">
 	<title>Add Syllabus</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="OnlineCourses.css"></link>
 </head>
 <body>
+	<div id="profile" class="profile"></div>
 	<div id="mainCard">
-		<div id="header"><button id="addCourse" class="btn btn-info" onclick="addCourse()">Add Course</button></div>
+		<p id="message" class="message"></p>
+		<div id="header">
+			<button><a id="logout" href="Logout.php"><span class="glyphicon glyphicon-log-out" title="Logout"></span></a></button>
+			<button id="addCourse" class="btn btn-info" onclick="addCourse()">Add Course</button>
+		</div>
 		<div id="card" class="include"></div>
 	</div>
 </body>
 <script type="text/javascript">
 	var syllabusItems = [];
-	$(document).ready(function(){
+	var userProfile = [{userId: "", userName: ""}];
+	var isNewRecord = true;
+	$(function()
+	{
+		getSyllabusItems()
+		getUserData()
+	});
+	function getSyllabusItems()
+	{
 		$.ajax({
 			url: 'ShowData.php',
-			type: 'get',
+			type: 'GET',
 			dataType: 'JSON',
 			success: function(response){
 				syllabusItems = response;
 				for(let obj of syllabusItems)
 				{
-					obj["editMode"] = false;
-					obj["isTitleValid"] = true;
-					obj["isDescreptionValid"] = true;
-					obj["isObjectiveValid"] = true;
+					setValidationFlags(obj);
 				}
 				reRender(syllabusItems);
+			},
+			error: function (jqxhr, exception)
+			{
+				displayErrors(jqxhr, exception)
 			}
 		});
-	});
-	var courseData = {};
+	}
+
+	function getUserData()
+	{
+		$.ajax({
+			url: 'Profile.php',
+			type: 'GET',
+			dataType: 'JSON',
+			success: function(response){
+				userProfile = response;
+				$("#profile").append(`<p id="userProfile">User Id: ${userProfile["userId"]} <br> 
+										User Name: ${userProfile["userName"]} </p>`);
+
+			},
+			error: function (jqxhr, exception)
+			{
+				displayErrors(jqxhr, exception)
+			}
+		});
+	}
 	
-	function createForm(index, obj)
+	function createForm(index, obj, counter)
 	{
 		let addCourseForm = `<div id="addCourseForm${index}" class="addCourseForm">
-			<label class="syllabusNumber">Syllabus${index + 1}</label>
+			<label class="syllabusNumber">Syllabus${counter}</label>
 			<fieldset class="scheduler-border">
 			<legend >Syllabus Title</legend>
 			<input id="title${index}" class="input-field" type="text" value="${obj.title}" name="title${index}" placeholder="Syllabus-title">
@@ -61,9 +92,9 @@
 			addCourseForm += `</fieldset>
 			<fieldset>
 			<legend>Learning objective</legend>
-			<input id="objective${index}" class="input-field" type="text" value="${obj.objective}" name="objective${index}" placeholder="Syllabus objective">
+			<input id="objective${index}" class="input-field" type="text" value="${obj.objectives}" name="objective${index}" placeholder="Syllabus objective">
 			<br>`;
-			if(!obj.isObjectiveValid)
+			if(!obj.isObjectivesValid)
 			{
 				addCourseForm += `<label id="objectiveError" class="errorMesssage">Please enter Syllabus-objective</label>`;
 			}
@@ -76,7 +107,7 @@
 
 	function addCourse()
 	{
-		const emptyObject = {id: syllabusItems.length, title: "", description: "", objective: "", status: 1, editMode: true, isTitleValid: true, isDescreptionValid: true, isObjectiveValid: true};
+		const emptyObject = {title: "", description: "", objectives: "", status: 1, editMode: true, isTitleValid: true, isDescreptionValid: true, isObjectivesValid: true};
 		syllabusItems.push(emptyObject);
 		reRender(syllabusItems);
 	}
@@ -84,7 +115,7 @@
 	function cancel(index)
 	{
 		const obj = syllabusItems[index];
-		if((obj.title == "") && (obj.description == "") && (obj.objective  == ""))
+		if((obj.title == "") && (obj.description == "") && (obj.objectives  == ""))
 		{
 			syllabusItems.splice(index, 1);
 		}
@@ -97,55 +128,66 @@
 		var id = syllabusItems[index]["id"];
 		var title = $(`#title${index}`).val();
 		var description = $(`#description${index}`).val();
-		var objective = $(`#objective${index}`).val();
-		$.ajax(
-		{	type: "POST",
-			url: "Insert.php",
-			data: {id:id, title:title, description:description, objective:objective}
-		}).done(function(message)
+		var objectives = $(`#objective${index}`).val();
+		if(isFormValid(index))
 		{
-			syllabusItems[index] = message;
-			let obj = syllabusItems[index];
-			obj["editMode"] = false;
-			obj["isTitleValid"] = true;
-			obj["isDescreptionValid"] = true;
-			obj["isObjectiveValid"] = true;
-
-			reRender(syllabusItems);
-		})
-	}
-
-	function reRender(syllabusItems)
-	{
-		$(".include").html("");
-		let index = 0;
-		for( const obj of syllabusItems)
-		{
-			 if(obj.status == 1)
+			if(isNewRecord)
 			{
-				if(obj.editMode == false)
-				{
-					var HTMLElement = createCard(index, obj)
-				}
-				else
-				{
-					var HTMLElement = createForm(index, obj)
-				}
-				$(".include").append(HTMLElement);
+				let fieldValues = {title:title, description:description, objectives:objectives};
+				console.log(JSON.stringify(fieldValues));
+				$.ajax(
+				{	type: "POST",
+					url: "Insert.php",
+					dataType: 'json',
+					contentType: "application/json",
+					data:  JSON.stringify(fieldValues),
+					success: function(message)
+					{
+						syllabusItems[index] = message;
+						let obj = syllabusItems[index];
+						$("#message").html("Syllabus added Successfully.");
+						setValidationFlags(message);
+					},
+					error: function (jqxhr, exception)
+					{
+						displayErrors(jqxhr, exception)
+					}
+		    	})
 			}
-			index++;
+			else
+			{
+				isNewRecord  = true;
+				let fieldValues = {id:id, title:title, description:description, objectives:objectives}
+				console.log(JSON.stringify(fieldValues));
+				$.ajax(
+				{	type: "POST",
+					url: "update.php",
+					dataType: 'json',
+					contentType: "application/json",
+					data:  JSON.stringify(fieldValues),
+					success: function(message)
+					{
+						syllabusItems[index] = message;
+						let obj = syllabusItems[index];
+						setValidationFlags(obj);
+						$("#message").html("Syllabus updated Successfully.");
+					},
+					error: function (jqxhr, exception)
+					{
+						displayErrors(jqxhr, exception)
+					}
+				})
+			}
 		}
+		reRender(syllabusItems);
 	}
 
-	function createCard(index, obj)
-	{
-		const card = `<div class="contents">
-				<label class="index" id="index">${obj.id}</label>
-				<label class="cardContent">${obj.title}<br>${obj.description}</label> 
-				<a href="#" id="delete" onclick="deleteCourse(${index})"><span class='glyphicon glyphicon-trash'></a>
-				<a href="#" id="edit${index}" onclick="edit(${index})"><span class='glyphicon glyphicon-edit'></span></a>
-				</div>`;
-		return card;
+	function edit(index)
+	{	
+		isNewRecord = false;
+		const obj = syllabusItems[index];
+		obj.editMode = true;
+		reRender(syllabusItems);	
 	}
 
 	function deleteCourse(index)
@@ -155,29 +197,64 @@
 		{
 			const obj = syllabusItems[index];
 			let id = obj.id;
+			let jsonObject = {id:id};
 			$.ajax(
-			{	type: "POST",
+			{	type: "DELETE",
 				url: "delete.php",
-				data: {id:id}
-			}).done(function(message)
-			{	
-				if(message == 1)
-				{
-					obj.status = 0;	
+				dataType: 'json',
+				contentType: "application/json",
+				data: JSON.stringify(jsonObject),
+				success: function(data, textStatus, xhr)
+				{	
+					obj.status = 0;
+					$("#message").html("Syllabus deleted Successfully.");
 					reRender(syllabusItems);
+				},
+				error: function (jqxhr, exception)
+				{
+					displayErrors(jqxhr, exception)
 				}
-			});
+			})
 		}
 	}
 
-	function edit(index)
+	function createCard(index, obj, counter)
 	{
-		const obj = syllabusItems[index];
-		obj.editMode = true;
-		reRender(syllabusItems);	
+		const card = `<div class="contents">
+				<label class="index" id="index">${counter}</label>
+				<label class="cardContent">${obj.title}<br>${obj.description}</label> 
+				<a href="#" id="delete" class="anchor" title="Delete" onclick="deleteCourse(${index})"><span class='glyphicon glyphicon-trash'></a>
+				<a href="#" id="edit${index}" class="anchor" title="Edit" onclick="edit(${index})"><span class='glyphicon glyphicon-edit'></span></a>
+				</div>`;
+		return card;
 	}
 
-	function formValidation(index)
+	function reRender(syllabusItems)
+	{
+		$(".include").html("");
+		let index = 0;
+		let counter = 1;
+		for( const obj of syllabusItems)
+		{
+			 if(obj.status == 1)
+			{
+				if(obj.editMode == false)
+				{
+					var HTMLElement = createCard(index, obj, counter)
+				}
+				else
+				{
+					var HTMLElement = createForm(index, obj, counter)
+				}
+				$(".include").append(HTMLElement);
+				counter++;
+			}
+			index++;
+		}
+	}
+
+
+	function isFormValid(index)
 	{
 		const obj = syllabusItems[index];
 		var isValid = true;
@@ -195,10 +272,37 @@
 		
 		if($(`#objective${index}`).val() == "")
 		{
-			obj.isObjectiveValid = false;
+			obj.isObjectivesValid = false;
 			isValid = false;
 		}
 		return ((!isValid) ? false : true);
+	}
+
+	function setValidationFlags(obj)
+	{
+		obj["editMode"] = false;
+		obj["isTitleValid"] = true;
+		obj["isDescreptionValid"] = true;
+		obj["isObjectivesValid"] = true;
+		reRender(syllabusItems);
+	}
+
+	function displayErrors(jqxhr, exception)
+	{
+		var errorMessage = '';
+		if (jqxhr.status == 404)
+		{
+			errorMessage = 'Request not found.';
+		}
+		else if(jqxhr.status == 500)
+		{
+			errorMessage = 'Internal server error.';
+		}
+		else
+		{
+			errorMessage = 'Uncaught Error.\n', jqxhr.responseText;
+		}
+		$("#message").html(errorMessage);
 	}
 
 </script>
